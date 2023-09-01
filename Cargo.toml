@@ -1,0 +1,12 @@
+[package]
+name = "shape-blast"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+bytemuck = { version = "1.13", features = ["derive"] }
+glam = { version = "0.24", features = ["bytemuck"] }
+pollster = "0.3"
+wgpu = "0.17"
+winit = { git = "https://github.com/rust-windowing/winit" }
