@@ -1,15 +1,48 @@
+mod camera;
+mod color;
+mod renderer_status;
+pub mod shape;
+mod utils;
+
+pub use self::camera::*;
+pub use self::color::*;
+pub use self::renderer_status::*;
+pub(crate) use self::utils::*;
 use glam::UVec2;
+use std::sync::Arc;
 use winit::window::Window;
 
 #[derive(Debug)]
-pub struct Graphics {
-    pub surface: wgpu::Surface,
-    pub surface_config: wgpu::SurfaceConfiguration,
-    pub device: wgpu::Device,
-    pub queue: wgpu::Queue,
+struct WgpuContextData {
+    device: wgpu::Device,
+    queue: wgpu::Queue,
 }
 
-impl Graphics {
+#[derive(Clone, Debug)]
+pub struct WgpuContext(Arc<WgpuContextData>);
+
+impl WgpuContext {
+    pub fn new(device: wgpu::Device, queue: wgpu::Queue) -> Self {
+        Self(Arc::new(WgpuContextData { device, queue }))
+    }
+
+    pub fn device(&self) -> &wgpu::Device {
+        &self.0.device
+    }
+
+    pub fn queue(&self) -> &wgpu::Queue {
+        &self.0.queue
+    }
+}
+
+#[derive(Debug)]
+pub struct GraphicsContext {
+    pub context: WgpuContext,
+    pub surface: wgpu::Surface,
+    pub surface_config: wgpu::SurfaceConfiguration,
+}
+
+impl GraphicsContext {
     #[inline]
     pub unsafe fn new(window: &Window) -> anyhow::Result<Self> {
         pollster::block_on(Self::new_async(window))
@@ -52,10 +85,9 @@ impl Graphics {
         surface.configure(&device, &surface_config);
 
         Ok(Self {
+            context: WgpuContext::new(device, queue),
             surface,
             surface_config,
-            device,
-            queue,
         })
     }
 
@@ -66,6 +98,7 @@ impl Graphics {
     }
 
     pub fn configure_surface(&mut self) {
-        self.surface.configure(&self.device, &self.surface_config)
+        self.surface
+            .configure(&self.context.device(), &self.surface_config)
     }
 }

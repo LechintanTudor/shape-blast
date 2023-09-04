@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0"
 bytemuck = { version = "1.13", features = ["derive"] }
+derive_more = { version = "1.0.0-beta.3", features = ["full"] }
 glam = { version = "0.24", features = ["bytemuck"] }
 pollster = "0.3"
 wgpu = "0.17"
