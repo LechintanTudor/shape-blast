@@ -1,4 +1,4 @@
-use crate::graphics::shape::{Shape, ShapeRenderer, ShapeVertex};
+use crate::graphics::shape::{load_shape_from_file, ShapeRenderer};
 use crate::graphics::{Camera, CameraManager, GraphicsContext};
 use glam::{UVec2, Vec2};
 use winit::dpi::LogicalSize;
@@ -34,28 +34,7 @@ pub fn run() -> anyhow::Result<()> {
         anchor: Vec2::ZERO,
     };
 
-    let shape = Shape::new(
-        graphics.context.device(),
-        &[
-            ShapeVertex {
-                position: Vec2::new(-100.0, -100.0),
-                ..Default::default()
-            },
-            ShapeVertex {
-                position: Vec2::new(-100.0, 100.0),
-                ..Default::default()
-            },
-            ShapeVertex {
-                position: Vec2::new(100.0, 100.0),
-                ..Default::default()
-            },
-            ShapeVertex {
-                position: Vec2::new(100.0, -100.0),
-                ..Default::default()
-            },
-        ],
-        &[0, 1, 3, 3, 1, 2],
-    );
+    let shape = load_shape_from_file(graphics.context.device(), "assets/shapes/player.ron")?;
 
     event_loop.run(|event, _, control_flow| {
         match event {

@@ -99,6 +99,6 @@ impl GraphicsContext {
 
     pub fn configure_surface(&mut self) {
         self.surface
-            .configure(&self.context.device(), &self.surface_config)
+            .configure(self.context.device(), &self.surface_config)
     }
 }

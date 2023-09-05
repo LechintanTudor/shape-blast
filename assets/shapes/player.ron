@@ -1,0 +1,10 @@
+(
+    grid_size: (3, 3),
+    operations: [
+        Begin((0, 0)),
+        LineTo((0, 3)),
+        LineTo((3, 3)),
+        LineTo((3, 0)),
+        Close,
+    ],
+)

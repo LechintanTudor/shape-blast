@@ -8,6 +8,9 @@ anyhow = "1.0"
 bytemuck = { version = "1.13", features = ["derive"] }
 derive_more = { version = "1.0.0-beta.3", features = ["full"] }
 glam = { version = "0.24", features = ["bytemuck"] }
+lyon = "1.0" 
 pollster = "0.3"
+ron = "0.8"
+serde = { version = "1.0", features = ["derive"] }
 wgpu = "0.17"
 winit = { git = "https://github.com/rust-windowing/winit" }
