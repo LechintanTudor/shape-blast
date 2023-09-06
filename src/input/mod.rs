@@ -3,6 +3,8 @@ mod keybindings;
 
 pub use self::controller::*;
 pub use self::keybindings::*;
+use crate::gameplay::Speed;
+use sparsey::prelude::*;
 use std::ops::Index;
 use winit::keyboard::KeyCode;
 
@@ -64,4 +66,15 @@ impl Index<ControllerId> for ControllerManager {
     fn index(&self, id: ControllerId) -> &Self::Output {
         &self.controllers[id.0].1
     }
+}
+
+pub fn controller_system(
+    controller_manager: Res<ControllerManager>,
+    controller_ids: Comp<ControllerId>,
+    mut speeds: CompMut<Speed>,
+) {
+    (&controller_ids, &mut speeds).for_each(|(controller_id, speed)| {
+        let controller = &controller_manager[*controller_id];
+        speed.direction = controller.direction();
+    });
 }

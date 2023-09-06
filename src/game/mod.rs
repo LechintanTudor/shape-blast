@@ -4,12 +4,13 @@ use self::frame_timer::*;
 use crate::gameplay::{movement_system, Bounds, Player, Speed};
 use crate::graphics::shape::ShapeParams;
 use crate::graphics::{Camera, GraphicsManager, Shapes};
-use crate::input::ControllerManager;
+use crate::input::{controller_system, ControllerManager, Keybindings};
 use glam::{Affine2, UVec2, Vec2};
 use sparsey::prelude::*;
 use winit::dpi::LogicalSize;
 use winit::event::{Event, KeyEvent, StartCause, WindowEvent};
 use winit::event_loop::EventLoop;
+use winit::keyboard::KeyCode;
 use winit::window::{Window, WindowBuilder};
 
 const WNIDOW_WIDTH: f64 = 800.0;
@@ -39,7 +40,10 @@ impl Game {
 
         let graphics = unsafe { GraphicsManager::new(&window)? };
 
-        let fixed_update_schedule = Schedule::builder().add_system(movement_system).build();
+        let fixed_update_schedule = Schedule::builder()
+            .add_system(controller_system)
+            .add_system(movement_system)
+            .build();
 
         let mut world = World::default();
         world.register::<Player>();
@@ -108,13 +112,19 @@ impl Game {
     }
 
     fn init(&mut self) {
+        let mut controller_manager = self.resources.borrow_mut::<ControllerManager>();
+
         self.world.create((
             Player,
             Bounds::from_position_and_size(Vec2::ZERO, Vec2::splat(100.0)),
-            Speed {
-                direction: Vec2::new(1.0, 0.0),
-                velocity: 5.0,
-            },
+            Speed::from_velocity(5.0),
+            controller_manager.create_controller(Keybindings {
+                up: KeyCode::KeyW,
+                down: KeyCode::KeyS,
+                left: KeyCode::KeyA,
+                right: KeyCode::KeyD,
+                primary_action: KeyCode::Space,
+            }),
         ));
     }
 
