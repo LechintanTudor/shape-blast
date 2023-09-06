@@ -11,6 +11,13 @@ pub struct Camera {
 }
 
 impl Camera {
+    pub fn from_size(size: Vec2) -> Self {
+        Self {
+            size,
+            anchor: Vec2::ZERO,
+        }
+    }
+
     pub fn ortho_matrix(&self) -> Mat4 {
         let tl_corner = self.size * (-0.5 - self.anchor);
         let br_corner = self.size * (0.5 - self.anchor);
@@ -41,6 +48,7 @@ impl Deref for CameraBindGroup {
     }
 }
 
+#[derive(Debug)]
 pub struct CameraManager {
     context: WgpuContext,
     projection_bind_group_layout: wgpu::BindGroupLayout,

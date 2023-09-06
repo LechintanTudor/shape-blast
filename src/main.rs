@@ -1,8 +1,13 @@
+#![allow(dead_code)]
 #![allow(clippy::module_inception)]
 
-mod game_loop;
+use crate::game::Game;
+
+mod game;
+mod gameplay;
 mod graphics;
+mod input;
 
 fn main() -> anyhow::Result<()> {
-    game_loop::run()
+    Game::run()
 }

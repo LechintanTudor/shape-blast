@@ -7,7 +7,7 @@ use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[non_exhaustive]
-#[derive(Clone, Copy, Pod, Zeroable)]
+#[derive(Clone, Copy, Debug, Pod, Zeroable)]
 struct ShapeInstance {
     scale_rotation_col_0: Vec2,
     scale_rotation_col_1: Vec2,
@@ -28,6 +28,7 @@ impl Default for ShapeInstance {
     }
 }
 
+#[derive(Clone, Debug)]
 struct ShapeBatch {
     shape: Shape,
     start_instance: u32,
@@ -51,6 +52,7 @@ impl Default for ShapeParams {
     }
 }
 
+#[derive(Debug)]
 pub struct ShapeRenderer {
     context: WgpuContext,
     pipeline: wgpu::RenderPipeline,

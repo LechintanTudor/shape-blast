@@ -2,12 +2,15 @@ mod camera;
 mod color;
 mod renderer_status;
 pub mod shape;
+mod shapes;
 mod utils;
 
 pub use self::camera::*;
 pub use self::color::*;
 pub use self::renderer_status::*;
+pub use self::shapes::*;
 pub(crate) use self::utils::*;
+use crate::graphics::shape::ShapeRenderer;
 use glam::UVec2;
 use std::sync::Arc;
 use winit::window::Window;
@@ -36,13 +39,15 @@ impl WgpuContext {
 }
 
 #[derive(Debug)]
-pub struct GraphicsContext {
+pub struct GraphicsManager {
     pub context: WgpuContext,
     pub surface: wgpu::Surface,
     pub surface_config: wgpu::SurfaceConfiguration,
+    pub camera_manager: CameraManager,
+    pub shape_renderer: ShapeRenderer,
 }
 
-impl GraphicsContext {
+impl GraphicsManager {
     #[inline]
     pub unsafe fn new(window: &Window) -> anyhow::Result<Self> {
         pollster::block_on(Self::new_async(window))
@@ -84,10 +89,19 @@ impl GraphicsContext {
 
         surface.configure(&device, &surface_config);
 
+        let context = WgpuContext::new(device, queue);
+
+        let camera_manager = CameraManager::new(context.clone());
+
+        let shape_renderer =
+            ShapeRenderer::new(context.clone(), &camera_manager, surface_format, 1);
+
         Ok(Self {
-            context: WgpuContext::new(device, queue),
+            context,
             surface,
             surface_config,
+            camera_manager,
+            shape_renderer,
         })
     }
 
