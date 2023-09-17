@@ -1,5 +1,5 @@
+use anchor::winit::keyboard::KeyCode;
 use serde::Deserialize;
-use winit::keyboard::KeyCode;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Keybindings {

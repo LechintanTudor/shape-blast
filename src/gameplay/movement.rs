@@ -1,4 +1,4 @@
-use glam::Vec2;
+use anchor::glam::Vec2;
 use sparsey::query::Query;
 use sparsey::world::{Comp, CompMut};
 

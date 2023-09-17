@@ -4,9 +4,9 @@ mod keybindings;
 pub use self::controller::*;
 pub use self::keybindings::*;
 use crate::gameplay::Speed;
+use anchor::winit::keyboard::KeyCode;
 use sparsey::prelude::*;
 use std::ops::Index;
-use winit::keyboard::KeyCode;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ControllerId(usize);

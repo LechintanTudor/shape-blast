@@ -1,4 +1,6 @@
-use crate::graphics::shape::{Shape, ShapeVertex};
+use anchor::game::GameResult;
+use anchor::graphics::shape::{Shape, ShapeVertex};
+use anchor::graphics::WgpuContext;
 use lyon::math::Point;
 use lyon::path::Path;
 use lyon::tessellation::{BuffersBuilder, FillOptions, FillTessellator, FillVertex, VertexBuffers};
@@ -21,7 +23,7 @@ struct ShapeData {
 }
 
 impl ShapeData {
-    fn build_shape(&self, device: &wgpu::Device) -> anyhow::Result<Shape> {
+    fn build_shape(&self, wgpu: &WgpuContext) -> GameResult<Shape> {
         let mut path_builder = Path::builder();
         let grid_offset = (self.grid_size.0 as f32 * 0.5, self.grid_size.1 as f32 * 0.5);
 
@@ -62,12 +64,12 @@ impl ShapeData {
             }),
         )?;
 
-        Ok(Shape::new(device, &buffers.vertices, &buffers.indices))
+        Ok(Shape::new(wgpu, &buffers.vertices, &buffers.indices))
     }
 }
 
-pub fn load_shape_from_file(device: &wgpu::Device, path: &str) -> anyhow::Result<Shape> {
+pub fn load_shape_from_file(wgpu: &WgpuContext, path: &str) -> GameResult<Shape> {
     let shape_str = fs::read_to_string(path)?;
     let shape_data = ron::from_str::<ShapeData>(&shape_str)?;
-    shape_data.build_shape(device)
+    shape_data.build_shape(wgpu)
 }

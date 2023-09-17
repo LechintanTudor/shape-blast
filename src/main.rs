@@ -1,13 +1,20 @@
 #![allow(dead_code)]
 #![allow(clippy::module_inception)]
 
-use crate::game::Game;
-
 mod game;
 mod gameplay;
 mod graphics;
 mod input;
 
-fn main() -> anyhow::Result<()> {
-    Game::run()
+use crate::game::ShapeBlast;
+use anchor::game::{Config, GameResult};
+
+fn main() -> GameResult {
+    anchor::run(
+        ShapeBlast::new,
+        Config {
+            window_size: (800, 500),
+            ..Default::default()
+        },
+    )
 }

@@ -1,4 +1,4 @@
-use glam::Vec2;
+use anchor::glam::Vec2;
 
 #[derive(Clone, Copy, PartialEq, Eq, Default, Debug)]
 pub enum ControllerAxis {
