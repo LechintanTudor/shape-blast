@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anchor = { path = "../anchor" }
+derive_more = { version = "1.0.0-beta.3", features = ["full"] }
 lyon = "1.0" 
 ron = "0.8"
 serde = { version = "1.0", features = ["derive"] }

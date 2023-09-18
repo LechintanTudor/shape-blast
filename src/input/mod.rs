@@ -1,10 +1,13 @@
+mod button_bindings;
 mod controller;
-mod keybindings;
+mod cursor_position;
 
+pub use self::button_bindings::*;
 pub use self::controller::*;
-pub use self::keybindings::*;
-use crate::gameplay::Speed;
-use anchor::winit::keyboard::KeyCode;
+pub use self::cursor_position::*;
+
+use crate::gameplay::{BoundingBox, Player, Speed};
+use anchor::glam::Vec2;
 use sparsey::prelude::*;
 use std::ops::Index;
 
@@ -13,13 +16,13 @@ pub struct ControllerId(usize);
 
 #[derive(Default, Debug)]
 pub struct ControllerManager {
-    controllers: Vec<(Keybindings, Controller)>,
+    controllers: Vec<(ButtonBindings, Controller)>,
 }
 
 impl ControllerManager {
-    pub fn create_controller(&mut self, keybindings: Keybindings) -> ControllerId {
+    pub fn create_controller(&mut self, bindings: ButtonBindings) -> ControllerId {
         let index = self.controllers.len();
-        self.controllers.push((keybindings, Default::default()));
+        self.controllers.push((bindings, Default::default()));
         ControllerId(index)
     }
 
@@ -27,33 +30,43 @@ impl ControllerManager {
         self.controllers.clear();
     }
 
-    pub fn handle_key_press(&mut self, key: KeyCode) {
-        for (keybindings, state) in self.controllers.iter_mut() {
-            if key == keybindings.up {
+    pub fn handle_button_press<B>(&mut self, button: B)
+    where
+        B: Into<Button>,
+    {
+        let button = button.into();
+
+        for (bindings, state) in self.controllers.iter_mut() {
+            if button == bindings.up {
                 state.y_axis.handle_press(ControllerAxis::Negative);
-            } else if key == keybindings.down {
+            } else if button == bindings.down {
                 state.y_axis.handle_press(ControllerAxis::Positive);
-            } else if key == keybindings.left {
+            } else if button == bindings.left {
                 state.x_axis.handle_press(ControllerAxis::Negative);
-            } else if key == keybindings.right {
+            } else if button == bindings.right {
                 state.x_axis.handle_press(ControllerAxis::Positive);
-            } else if key == keybindings.primary_action {
+            } else if button == bindings.primary_action {
                 state.primary_action = true;
             }
         }
     }
 
-    pub fn handle_key_release(&mut self, key: KeyCode) {
-        for (keybindings, state) in self.controllers.iter_mut() {
-            if key == keybindings.up {
+    pub fn handle_button_release<B>(&mut self, button: B)
+    where
+        B: Into<Button>,
+    {
+        let button = button.into();
+
+        for (bindings, state) in self.controllers.iter_mut() {
+            if button == bindings.up {
                 state.y_axis.handle_release(ControllerAxis::Negative);
-            } else if key == keybindings.down {
+            } else if button == bindings.down {
                 state.y_axis.handle_release(ControllerAxis::Positive);
-            } else if key == keybindings.left {
+            } else if button == bindings.left {
                 state.x_axis.handle_release(ControllerAxis::Negative);
-            } else if key == keybindings.right {
+            } else if button == bindings.right {
                 state.x_axis.handle_release(ControllerAxis::Positive);
-            } else if key == keybindings.primary_action {
+            } else if button == bindings.primary_action {
                 state.primary_action = false;
             }
         }
@@ -76,5 +89,15 @@ pub fn controller_system(
     (&controller_ids, &mut speeds).for_each(|(controller_id, speed)| {
         let controller = &controller_manager[*controller_id];
         speed.direction = controller.direction();
+    });
+}
+
+pub fn cursor_system(
+    mut players: CompMut<Player>,
+    bounds: Comp<BoundingBox>,
+    cursor_position: Res<CursorPosition>,
+) {
+    (&mut players, &bounds).for_each(|(player, bounds)| {
+        player.angle = Vec2::NEG_Y.angle_between(cursor_position.get() - bounds.position);
     });
 }

@@ -1,0 +1,7 @@
+(
+    up: Key(KeyW),
+    down: Key(KeyS),
+    left: Key(KeyA),
+    right: Key(KeyD),
+    primary_action: Mouse(Left),
+)

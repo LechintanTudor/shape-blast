@@ -3,12 +3,12 @@ use sparsey::query::Query;
 use sparsey::world::{Comp, CompMut};
 
 #[derive(Clone, Copy, Debug)]
-pub struct Bounds {
+pub struct BoundingBox {
     pub position: Vec2,
     pub half_size: Vec2,
 }
 
-impl Bounds {
+impl BoundingBox {
     pub fn from_position_and_size(position: Vec2, size: Vec2) -> Self {
         Self {
             position,
@@ -36,7 +36,7 @@ impl Speed {
     }
 }
 
-pub fn movement_system(mut bounds: CompMut<Bounds>, speeds: Comp<Speed>) {
+pub fn movement_system(mut bounds: CompMut<BoundingBox>, speeds: Comp<Speed>) {
     (&mut bounds, &speeds).for_each(|(bounds, speed)| {
         bounds.position += speed.displacement();
     });
